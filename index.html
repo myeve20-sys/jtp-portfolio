@@ -657,11 +657,11 @@ function renderMarket(d) {
 
   var markets = [
     { name:'🥇 국제금', drop: d.goldDrop,   sig: d.goldSignal  || '' },
-    { name:'🥈 국제은', drop: d.silverDrop, sig: 'SLV ' + fmtRate(d.slvDropPct) },
-    { name:'📈 VOO',    drop: d.vooDrop2,   sig: d.vooSignal   || '' },
-    { name:'💻 QQQ',    drop: d.qqqDrop,    sig: 'TIGER 나스닥' },
-    { name:'💾 SNDK',   drop: d.sndkDrop,   sig: '전고점 대비' },
-    { name:'💵 원달러', drop: null,  val: d.usdkrw, sig: (d.usdkrwSig || '').substring(0,20) }
+    { name:'🥈 국제은(SLV)', drop: d.silverDrop, sig: d.silverSignal ? d.silverSignal.substring(0,30) : ('ATH대비 ' + fmtRate(d.slvDropPct)) },
+    { name:'📈 VOO',    drop: d.vooDrop2,   sig: d.vooSignal ? d.vooSignal.substring(0,30) : '' },
+    { name:'💻 QQQ',    drop: d.qqqDrop,    sig: d.qqqDrop != null ? ('전고점대비 ' + fmtRate(d.qqqDrop)) : '데이터 없음' },
+    { name:'💾 SNDK',   drop: d.sndkDrop,   sig: '전고점대비 ' + fmtRate(d.sndkDrop || d.sndkDropPct) },
+    { name:'💵 원달러', drop: null,  val: d.usdkrw, sig: d.usdkrwSig ? d.usdkrwSig.substring(0,28) : '' }
   ];
 
   markets.forEach(function(m) {
