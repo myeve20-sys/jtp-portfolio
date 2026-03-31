@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0D1B2A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JTP Portfolio">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>JTP 포트폴리오</title>
+<style>
+:root {
+  --bg:      #0D1B2A;
+  --card:    #1A2A3A;
+  --card2:   #162030;
+  --border:  #2A3F55;
+  --gold:    #F4C430;
+  --gold2:   #FFE8A3;
+  --blue:    #4A9EFF;
+  --green:   #4CAF50;
+  --red:     #FF5252;
+  --orange:  #FF9800;
+  --yellow:  #FFC107;
+  --purple:  #CE93D8;
+  --text:    #E8F0FE;
+  --muted:   #7A9BBF;
+  --radius:  14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+  font-size: 14px; min-height: 100vh; padding-bottom: 72px;
+}
+
+/* ── 헤더 ── */
+.header {
+  background: linear-gradient(135deg, #0D1B2A 0%, #1A2A3A 100%);
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.header-left { display: flex; align-items: center; gap: 10px; }
+.header-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, #1A2A3A, #0D1B2A);
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 900; color: var(--gold); letter-spacing: -0.5px;
+}
+.header-title { font-size: 16px; font-weight: 700; color: var(--gold); }
+.header-sub   { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.header-btns  { display: flex; gap: 6px; align-items: center; }
+.icon-btn {
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  color: var(--text); width: 34px; height: 34px; border-radius: 50%;
+  cursor: pointer; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.icon-btn:active { background: rgba(255,255,255,0.15); }
+.icon-btn.spinning { animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 탭 바 ── */
+.tab-bar {
+  display: flex; background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 62px; z-index: 99;
+}
+.tab-btn {
+  flex: 1; padding: 10px 4px; background: none; border: none;
+  color: var(--muted); font-size: 11px; font-weight: 600;
+  cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all 0.2s; display: flex; flex-direction: column;
+  align-items: center; gap: 2px;
+}
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+.tab-icon { font-size: 16px; }
+
+/* ── 탭 컨텐츠 ── */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── 섹션 ── */
+.section { padding: 10px 12px 0; }
+.section-title {
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 1.2px;
+  margin-bottom: 7px; padding-left: 2px;
+}
+
+/* ── 총자산 카드 ── */
+.asset-hero {
+  background: linear-gradient(135deg, #1A2A3A, #162030);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 16px 14px;
+  margin-bottom: 8px;
+}
+.asset-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.asset-amount { font-size: 28px; font-weight: 800; color: var(--gold); line-height: 1; }
+.asset-amount span { font-size: 13px; color: var(--muted); font-weight: 400; }
+.rate-pill {
+  padding: 5px 11px; border-radius: 20px;
+  font-size: 14px; font-weight: 700;
+}
+.rate-pos { background: rgba(76,175,80,.18); color: var(--green); }
+.rate-neg { background: rgba(255,82,82,.15); color: var(--red); }
+.rate-neu { background: rgba(255,255,255,.08); color: var(--muted); }
+.asset-invest { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+.asset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.a-item { background: rgba(255,255,255,.04); border-radius: 9px; padding: 8px 10px; }
+.a-label { font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+.a-value { font-size: 13px; font-weight: 600; }
+.a-value.pos { color: var(--green); }
+.a-value.neg { color: var(--red); }
+
+/* ── 목표 진행바 ── */
+.goal-bar-wrap {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+}
+.goal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.goal-label { font-size: 11px; color: var(--muted); }
+.goal-pct { font-size: 13px; font-weight: 700; color: var(--gold); }
+.progress-track {
+  height: 6px; background: rgba(255,255,255,.08);
+  border-radius: 3px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--gold), #FFE8A3);
+  transition: width .5s ease;
+}
+
+/* ── 트리거 카드 ── */
+.trigger-card {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 12px 10px 14px;
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 6px;
+}
+.t-stripe { width: 3px; border-radius: 2px; flex-shrink: 0; align-self: stretch; }
+.t-head { flex: 1; min-width: 0; }
+.t-label { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 3px; }
+.t-value { font-size: 12px; font-weight: 600; line-height: 1.5; word-break: break-word; }
+.t-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* ── 색상 스트라이프 ── */
+.tc-gold   { background: var(--gold); }
+.tc-blue   { background: var(--blue); }
+.tc-green  { background: var(--green); }
+.tc-red    { background: var(--red); }
+.tc-orange { background: var(--orange); }
+.tc-purple { background: var(--purple); }
+.tc-gray   { background: var(--border); }
+
+/* ── SLV 상세 카드 ── */
+.slv-card {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px; margin-bottom: 6px;
+}
+.slv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.slv-title { font-size: 12px; font-weight: 700; color: #CE93D8; }
+.slv-drop-badge {
+  padding: 3px 9px; border-radius: 12px;
+  font-size: 12px; font-weight: 700;
+}
+.slv-price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 8px; }
+.slv-p-item { background: rgba(255,255,255,.04); border-radius: 7px; padding: 7px 9px; }
+.slv-p-label { font-size: 9px; color: var(--muted); margin-bottom: 2px; }
+.slv-p-val { font-size: 13px; font-weight: 700; }
+.slv-steps { display: flex; flex-direction: column; gap: 4px; }
+.slv-step {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.03); border-radius: 6px;
+  padding: 6px 8px;
+}
+.slv-step-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dot-done   { background: var(--green); box-shadow: 0 0 5px var(--green); }
+.dot-active { background: var(--yellow); box-shadow: 0 0 5px var(--yellow); animation: pulse 1.5s infinite; }
+.dot-wait   { background: var(--border); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.slv-step-info { flex: 1; }
+.slv-step-name { font-size: 11px; font-weight: 600; }
+.slv-step-detail { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.slv-step-tag {
+  font-size: 9px; font-weight: 700; padding: 2px 6px;
+  border-radius: 8px;
+}
+.tag-done   { background: rgba(76,175,80,.2); color: var(--green); }
+.tag-active { background: rgba(255,193,7,.2); color: var(--yellow); }
+.tag-wait   { background: rgba(255,255,255,.08); color: var(--muted); }
+
+/* ── 시장 점검 ── */
+.market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+.market-card {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 12px;
+}
+.m-name { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.m-drop { font-size: 20px; font-weight: 800; }
+.m-sig { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.3; }
+.drop-ok   { color: var(--green); }
+.drop-warn { color: var(--orange); }
+.drop-neg  { color: var(--red); }
+.drop-neu  { color: var(--muted); }
+
+/* ── 계좌별 ── */
+.account-card {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 12px;
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 5px;
+}
+.acc-icon { font-size: 18px; width: 28px; text-align: center; }
+.acc-info { flex: 1; min-width: 0; }
+.acc-name { font-size: 12px; font-weight: 600; }
+.acc-value { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.acc-rate { font-size: 14px; font-weight: 700; min-width: 55px; text-align: right; }
+
+/* ── 신호 행 ── */
+.signal-row {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 9px; padding: 9px 12px;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
+}
+.sig-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.s-green  { background: var(--green); box-shadow: 0 0 5px var(--green); }
+.s-yellow { background: var(--yellow); box-shadow: 0 0 5px var(--yellow); }
+.s-red    { background: var(--red); box-shadow: 0 0 5px var(--red); }
+.s-gray   { background: var(--border); }
+.sig-tag { font-size: 10px; color: var(--muted); min-width: 50px; }
+.sig-txt { font-size: 12px; flex: 1; }
+
+/* ── 김프 배지 ── */
+.kimp-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 12px;
+  font-size: 12px; font-weight: 700; margin-bottom: 6px;
+}
+.kimp-krx  { background: rgba(76,175,80,.18); color: var(--green); }
+.kimp-wait { background: rgba(255,193,7,.18); color: var(--yellow); }
+.kimp-gldm { background: rgba(74,158,255,.18); color: var(--blue); }
+
+/* ── 로딩 / 에러 ── */
+.loading {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 55vh; gap: 14px; color: var(--muted);
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%; animation: spin .8s linear infinite;
+}
+.error-box {
+  background: rgba(255,82,82,.08); border: 1px solid rgba(255,82,82,.3);
+  border-radius: var(--radius); padding: 16px; margin: 12px;
+  color: var(--red); font-size: 13px; line-height: 1.7;
+}
+
+/* ── 하단 상태바 ── */
+.status-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--card); border-top: 1px solid var(--border);
+  padding: 9px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; color: var(--muted); z-index: 98;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); display: inline-block; margin-right: 5px;
+  animation: pulse 2s infinite;
+}
+.live-dot.error { background: var(--red); animation: none; }
+
+/* ── 설정 모달 ── */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.75); z-index: 200;
+  align-items: flex-end; justify-content: center;
+}
+.overlay.show { display: flex; }
+.modal-sheet {
+  background: var(--card); border-radius: 20px 20px 0 0;
+  border: 1px solid var(--border); padding: 20px 20px 34px;
+  width: 100%; max-width: 480px;
+}
+.modal-handle {
+  width: 36px; height: 4px; background: var(--border);
+  border-radius: 2px; margin: 0 auto 16px;
+}
+.modal-title { font-size: 15px; font-weight: 700; color: var(--gold); margin-bottom: 14px; }
+.modal label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 5px; }
+.modal input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 9px; padding: 11px 13px; color: var(--text);
+  font-size: 13px; margin-bottom: 14px;
+}
+.modal input:focus { outline: none; border-color: var(--blue); }
+.modal-hint { font-size: 11px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+.btn-row { display: flex; gap: 8px; }
+.btn {
+  flex: 1; padding: 11px; border-radius: 10px; border: none;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+}
+.btn-save   { background: var(--blue); color: #fff; }
+.btn-cancel { background: rgba(255,255,255,.08); color: var(--text); }
+
+/* ── 구분선 ── */
+.divider { height: 8px; background: transparent; }
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-icon">JTP</div>
+    <div>
+      <div class="header-title">JTP 포트폴리오</div>
+      <div class="header-sub" id="updateTime">업데이트 중...</div>
+    </div>
+  </div>
+  <div class="header-btns">
+    <button class="icon-btn" onclick="showConfig()" title="설정">⚙️</button>
+    <button class="icon-btn" id="refreshBtn" onclick="loadData()" title="새로고침">🔄</button>
+  </div>
+</div>
+
+<!-- 탭 바 -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('home')" id="tab-home">
+    <span class="tab-icon">🏠</span><span>홈</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('trigger')" id="tab-trigger">
+    <span class="tab-icon">⚡</span><span>트리거</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('market')" id="tab-market">
+    <span class="tab-icon">📉</span><span>시장</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('account')" id="tab-account">
+    <span class="tab-icon">🏦</span><span>계좌</span>
+  </button>
+</div>
+
+<!-- 메인 컨텐츠 -->
+<div id="mainContent">
+  <div class="loading">
+    <div class="spinner"></div>
+    <div>포트폴리오 데이터 로딩 중...</div>
+  </div>
+</div>
+
+<!-- 하단 상태바 -->
+<div class="status-bar">
+  <span><span class="live-dot" id="liveDot"></span><span id="statusText">연결 대기</span></span>
+  <span id="goalText">🎯 목표: 20억</span>
+</div>
+
+<!-- 설정 모달 -->
+<div class="overlay" id="configModal" onclick="overlayClick(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚙️ API 설정</div>
+    <div class="modal">
+      <label>GAS 웹앱 URL</label>
+      <input type="url" id="apiUrlInput" placeholder="https://script.google.com/macros/s/...">
+      <div class="modal-hint">
+        구글 스크립트 편집기 → 배포 → 새 배포<br>
+        → 웹 앱 → "모든 사용자" 액세스 → URL 복사
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-cancel" onclick="hideConfig()">취소</button>
+        <button class="btn btn-save" onclick="saveConfig()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 전역 상태 ──
+var API_URL = localStorage.getItem('jtp_api_url') || 'https://script.google.com/macros/s/AKfycbzEU8JUPw2yl7dVKlgAsEfnJlDe8aibTirP3E9OYsptkYr6027D5smtPI2LDCtZMA4p/exec';
+var AUTO_MS  = 5 * 60 * 1000;
+var timer, gData = null;
+var activeTab = 'home';
+
+// ── 탭 전환 ──
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (gData) renderTab(gData, tab);
+}
+
+// ── 유틸 ──
+function fmt(n) {
+  if (n === null || n === undefined || n === '') return '—';
+  return Math.round(Number(n)).toLocaleString('ko-KR');
+}
+function fmtRate(n) {
+  var v = typeof n === 'number' ? n : parseFloat(n);
+  if (isNaN(v)) return '—';
+  return (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+}
+function fmtUSD(n) {
+  var v = typeof n === 'number' ? n : parseFloat(n);
+  if (isNaN(v) || v === 0) return '—';
+  return '$' + v.toFixed(2);
+}
+function dropClass(n) {
+  var v = typeof n === 'number' ? n : parseFloat(n);
+  if (isNaN(v)) return 'drop-neu';
+  if (v >= 0) return 'drop-ok';
+  if (v >= -5) return 'drop-warn';
+  return 'drop-neg';
+}
+function rateClass(n) {
+  var v = typeof n === 'number' ? n : parseFloat(n);
+  if (isNaN(v)) return '';
+  return v >= 0 ? 'pos' : 'neg';
+}
+function pillClass(n) {
+  var v = typeof n === 'number' ? n : parseFloat(n);
+  if (isNaN(v)) return 'rate-neu';
+  return v > 0 ? 'rate-pos' : v < 0 ? 'rate-neg' : 'rate-neu';
+}
+function stripeColor(txt) {
+  txt = txt || '';
+  if (txt.includes('🟢') || txt.includes('✅')) return 'tc-green';
+  if (txt.includes('🔴') || txt.includes('🚨')) return 'tc-red';
+  if (txt.includes('🟠')) return 'tc-orange';
+  if (txt.includes('🟡')) return 'tc-gold';
+  if (txt.includes('🔵')) return 'tc-blue';
+  if (txt.includes('🟣')) return 'tc-purple';
+  return 'tc-gray';
+}
+function sigDotClass(txt) {
+  txt = txt || '';
+  if (txt.includes('🟢') || txt.includes('✅') || txt.includes('안정') || txt.includes('정상')) return 's-green';
+  if (txt.includes('🟡') || txt.includes('경계') || txt.includes('주의') || txt.includes('대기')) return 's-yellow';
+  if (txt.includes('🔴') || txt.includes('🚨') || txt.includes('발동') || txt.includes('오류')) return 's-red';
+  if (txt.includes('🟠')) return 's-yellow';
+  return 's-gray';
+}
+function kimpClass(v) {
+  var n = typeof v === 'number' ? v : parseFloat(v);
+  if (isNaN(n)) return 'kimp-wait';
+  if (n <= 3) return 'kimp-krx';
+  if (n < 7) return 'kimp-wait';
+  return 'kimp-gldm';
+}
+function accIcon(name) {
+  if (name.includes('ISA'))    return '🏦';
+  if (name.includes('연금'))   return '🧓';
+  if (name.includes('IRP'))    return '💼';
+  if (name.includes('CMA'))    return '💳';
+  if (name.includes('금'))     return '🥇';
+  if (name.includes('SLV') || name.includes('은')) return '🥈';
+  if (name.includes('SNDK'))   return '💾';
+  if (name.includes('VOO') || name.includes('일반')) return '📈';
+  return '🏦';
+}
+
+// ── 데이터 로드 ──
+function loadData() {
+  if (!API_URL) { showConfig(); return; }
+  var btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  document.getElementById('statusText').textContent = '업데이트 중...';
+
+  fetch(API_URL + '?t=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      btn.classList.remove('spinning');
+      if (d.status === 'error') throw new Error(d.message);
+      gData = d;
+      renderTab(d, activeTab);
+      document.getElementById('statusText').textContent = '실시간 연결';
+      document.getElementById('liveDot').className = 'live-dot';
+      document.getElementById('updateTime').textContent = d.updatedAt + ' 업데이트';
+      var prog = Math.min(100, (d.totalAsset / 2000000000 * 100)).toFixed(1);
+      document.getElementById('goalText').textContent = '🎯 목표 ' + prog + '%';
+      clearTimeout(timer);
+      timer = setTimeout(loadData, AUTO_MS);
+    })
+    .catch(function(err) {
+      btn.classList.remove('spinning');
+      document.getElementById('statusText').textContent = '연결 오류';
+      document.getElementById('liveDot').className = 'live-dot error';
+      document.getElementById('mainContent').innerHTML =
+        '<div class="error-box">❌ 데이터 로드 실패<br><br>' + err.message +
+        '<br><br>⚙️ 오른쪽 상단 설정에서 API URL을 확인해주세요.</div>';
+    });
+}
+
+// ── 탭 렌더 분기 ──
+function renderTab(d, tab) {
+  var html = '';
+  if (tab === 'home')    html = renderHome(d);
+  if (tab === 'trigger') html = renderTrigger(d);
+  if (tab === 'market')  html = renderMarket(d);
+  if (tab === 'account') html = renderAccount(d);
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+// ── 탭1: 홈 ──
+function renderHome(d) {
+  var rn  = parseFloat(d.returnRate) || 0;
+  var pl  = parseFloat(d.profitLoss) || 0;
+  var prog = Math.min(100, d.totalAsset / 2000000000 * 100);
+
+  var h = '<div class="section"><div class="divider"></div>';
+
+  // 총자산 히어로
+  h += '<div class="asset-hero">';
+  h += '<div class="asset-top">';
+  h += '<div><div class="asset-amount">' + fmt(d.totalAsset) + '<span>원</span></div></div>';
+  h += '<div class="rate-pill ' + pillClass(rn) + '">' + fmtRate(rn) + '</div>';
+  h += '</div>';
+  h += '<div class="asset-invest">원금 ' + fmt(d.totalInvest) + '원 · ' +
+       (rn >= 0 ? '수익 ' : '손실 ') + fmt(Math.abs(pl)) + '원</div>';
+  h += '<div class="asset-grid">';
+  h += '<div class="a-item"><div class="a-label">CMA</div><div class="a-value">' + fmt(d.cma) + '원</div></div>';
+  h += '<div class="a-item"><div class="a-label">여윳돈</div><div class="a-value">' + fmt(d.surplus) + '원</div></div>';
+  h += '<div class="a-item"><div class="a-label">합산 현금</div><div class="a-value">' + fmt(d.cashTotal) + '원</div></div>';
+  h += '<div class="a-item"><div class="a-label">월 투자금</div><div class="a-value">' + fmt(d.monthlyInvest) + '원</div></div>';
+  h += '</div></div>';
+
+  // 목표 진행바
+  h += '<div class="goal-bar-wrap">';
+  h += '<div class="goal-top">';
+  h += '<span class="goal-label">🎯 목표 20억 달성까지</span>';
+  h += '<span class="goal-pct">' + prog.toFixed(1) + '%</span>';
+  h += '</div>';
+  h += '<div class="progress-track"><div class="progress-fill" style="width:' + prog.toFixed(1) + '%"></div></div>';
+  h += '</div>';
+
+  h += '</div>'; // section
+
+  // 핵심 신호 요약
+  h += '<div class="section"><div class="section-title">🚦 핵심 신호</div>';
+
+  var keySignals = [
+    { tag: '🥇 G트리거',  val: d.gTriggerSig  || d.gTrigger  || '—' },
+    { tag: '🔵 B트리거',  val: d.bTriggerSig  || d.bTrigger  || '—' },
+    { tag: '🥈 A트리거',  val: d.aTriggerSig  || d.aTrigger  || '—' },
+    { tag: '🌡️ 김프',    val: d.kimpSig      || '—' }
+  ];
+  keySignals.forEach(function(s) {
+    h += '<div class="signal-row">';
+    h += '<span class="sig-dot ' + sigDotClass(s.val) + '"></span>';
+    h += '<span class="sig-tag">' + s.tag + '</span>';
+    h += '<span class="sig-txt">' + s.val + '</span>';
+    h += '</div>';
+  });
+  h += '</div>';
+
+  return h + '<div style="height:12px"></div>';
+}
+
+// ── 탭2: 트리거 ──
+function renderTrigger(d) {
+  var h = '<div class="section"><div class="section-title">⚡ 트리거 전체 현황</div>';
+
+  // 김프 배지
+  var kv = parseFloat(d.kimp) || 0;
+  var kc = kimpClass(kv);
+  var kl = kv <= 3 ? '🟢 KRX 금현물 매수' : kv < 7 ? '🟡 대기 (3~7%)' : '🔵 GLDM 매수';
+  h += '<div class="kimp-badge ' + kc + '">🌡️ 김프 ' + kv.toFixed(2) + '% — ' + kl + '</div>';
+
+  var trigs = [
+    { label:'🥇 G트리거',  val: d.gTriggerSig  || d.gTrigger,   sub: '국제금 전고점 대비 ' + fmtRate(d.goldDropPct) },
+    { label:'🛒 G2트리거', val: d.g2TriggerSig  || '—',          sub: '여윳돈 100% 금 집행' },
+    { label:'🔵 B트리거',  val: d.bTriggerSig  || d.bTrigger,   sub: 'VOO ' + fmtRate(d.vooDrop || d.vooDrop2) },
+    { label:'🟣 S트리거',  val: d.sTriggerSig  || d.sTrigger,   sub: 'VOO 전고점 회복 매도' },
+    { label:'🥈 A트리거',  val: d.aTriggerSig  || d.aTrigger,   sub: 'SLV 전고점 대비 ' + fmtRate(d.slvDropPct) },
+    { label:'💾 SNDK',     val: d.sndkSig      || d.sndkStrat,  sub: 'SNDK ' + fmtRate(d.sndkDrop) + ' (전고점대비)' }
+  ];
+
+  trigs.forEach(function(t) {
+    var sc = stripeColor(t.val);
+    h += '<div class="trigger-card">';
+    h += '<div class="t-stripe ' + sc + '"></div>';
+    h += '<div class="t-head">';
+    h += '<div class="t-label">' + t.label + '</div>';
+    h += '<div class="t-value">' + (t.val || '—') + '</div>';
+    h += '<div class="t-sub">' + t.sub + '</div>';
+    h += '</div></div>';
+  });
+
+  h += '</div>';
+
+  // A트리거 SLV 상세
+  h += '<div class="section"><div class="section-title">🥈 A트리거 SLV 상세</div>';
+  h += '<div class="slv-card">';
+  h += '<div class="slv-header">';
+  h += '<span class="slv-title">🥈 SLV 단계별 현황</span>';
+  var slvDrop = parseFloat(d.slvDropPct) || 0;
+  h += '<span class="slv-drop-badge ' + (slvDrop <= -40 ? 'rate-neg' : slvDrop <= -20 ? 'rate-neg' : 'rate-neu') + '">' + fmtRate(slvDrop) + '</span>';
+  h += '</div>';
+
+  // 현재가 / 전고점
+  h += '<div class="slv-price-row">';
+  h += '<div class="slv-p-item"><div class="slv-p-label">SLV 현재가</div><div class="slv-p-val">' + fmtUSD(d.slvCurPrice) + '</div></div>';
+  h += '<div class="slv-p-item"><div class="slv-p-label">52주 전고점</div><div class="slv-p-val" style="color:var(--muted)">' + fmtUSD(d.slvPeakPrice) + '</div></div>';
+  h += '</div>';
+
+  // 단계별 상태
+  var aRows = d.aTriggerRows || [];
+  var stageConfigs = [
+    { name: 'A-1', cond: '-40%', amount: '250만원', thres: -40 },
+    { name: 'A-2', cond: '-45%', amount: '300만원', thres: -45 },
+    { name: 'A-3', cond: '-50%', amount: '450만원', thres: -50 }
+  ];
+
+  h += '<div class="slv-steps">';
+  stageConfigs.forEach(function(cfg, idx) {
+    var row  = aRows[idx] || {};
+    var done = row.execAmt && parseFloat(row.execAmt) > 0;
+    var active = !done && slvDrop <= cfg.thres;
+    var dotCls = done ? 'dot-done' : active ? 'dot-active' : 'dot-wait';
+    var tagCls = done ? 'tag-done' : active ? 'tag-active' : 'tag-wait';
+    var tagTxt = done ? '✅ 완료' : active ? '⚡ 발동' : '⏳ 대기';
+    h += '<div class="slv-step">';
+    h += '<div class="slv-step-dot ' + dotCls + '"></div>';
+    h += '<div class="slv-step-info">';
+    h += '<div class="slv-step-name">' + cfg.name + ' (' + cfg.cond + ')  ' + cfg.amount + '</div>';
+    if (done) {
+      h += '<div class="slv-step-detail">집행: ' + fmt(row.execAmt) + '원' +
+           (row.execDate ? ' (' + (row.execDate + '').substring(0, 10) + ')' : '') + '</div>';
+    } else if (active) {
+      h += '<div class="slv-step-detail">발동! 즉시 집행 필요</div>';
+    } else {
+      var remain = slvDrop - cfg.thres;
+      h += '<div class="slv-step-detail">추가 하락 필요: ' + fmtRate(remain) + '</div>';
+    }
+    h += '</div>';
+    h += '<span class="slv-step-tag ' + tagCls + '">' + tagTxt + '</span>';
+    h += '</div>';
+  });
+  h += '</div></div></div>';
+
+  return h + '<div style="height:12px"></div>';
+}
+
+// ── 탭3: 시장 ──
+function renderMarket(d) {
+  var h = '<div class="section"><div class="section-title">📉 시장 점검</div>';
+  h += '<div class="market-grid">';
+
+  var markets = [
+    { name:'🥇 국제금', drop: d.goldDrop,   sig: d.goldSignal  || '' },
+    { name:'🥈 국제은', drop: d.silverDrop, sig: 'SLV ' + fmtRate(d.slvDropPct) },
+    { name:'📈 VOO',    drop: d.vooDrop2,   sig: d.vooSignal   || '' },
+    { name:'💻 QQQ',    drop: d.qqqDrop,    sig: 'TIGER 나스닥' },
+    { name:'💾 SNDK',   drop: d.sndkDrop,   sig: '전고점 대비' },
+    { name:'💵 원달러', drop: null,  val: d.usdkrw, sig: (d.usdkrwSig || '').substring(0,20) }
+  ];
+
+  markets.forEach(function(m) {
+    h += '<div class="market-card">';
+    h += '<div class="m-name">' + m.name + '</div>';
+    if (m.drop !== null && m.drop !== undefined) {
+      var dv = parseFloat(m.drop);
+      h += '<div class="m-drop ' + dropClass(dv) + '">' + fmtRate(dv) + '</div>';
+    } else {
+      h += '<div class="m-drop drop-neu">' + fmt(m.val) + '<span style="font-size:11px;color:var(--muted)">원</span></div>';
+    }
+    if (m.sig) h += '<div class="m-sig">' + m.sig + '</div>';
+    h += '</div>';
+  });
+  h += '</div></div>';
+
+  // 전략 신호 전체
+  h += '<div class="section"><div class="section-title">🚦 전략 신호 전체</div>';
+  var allSigs = [
+    { tag: '🥇 G트리거',  val: d.gTriggerSig  || d.gTrigger  || '—' },
+    { tag: '🛒 G2트리거', val: d.g2TriggerSig  || '—' },
+    { tag: '🔵 B트리거',  val: d.bTriggerSig  || d.bTrigger  || '—' },
+    { tag: '🟣 S트리거',  val: d.sTriggerSig  || d.sTrigger  || '—' },
+    { tag: '🥈 A트리거',  val: d.aTriggerSig  || d.aTrigger  || '—' },
+    { tag: '💾 SNDK',     val: d.sndkSig      || d.sndkStrat || '—' },
+    { tag: '💵 원달러',   val: d.usdkrwSig    || '—' },
+    { tag: '🌡️ 김프',    val: d.kimpSig      || '—' }
+  ];
+  allSigs.forEach(function(s) {
+    h += '<div class="signal-row">';
+    h += '<span class="sig-dot ' + sigDotClass(s.val) + '"></span>';
+    h += '<span class="sig-tag">' + s.tag + '</span>';
+    h += '<span class="sig-txt">' + s.val + '</span>';
+    h += '</div>';
+  });
+  h += '</div>';
+
+  return h + '<div style="height:12px"></div>';
+}
+
+// ── 탭4: 계좌 ──
+function renderAccount(d) {
+  var h = '<div class="section"><div class="section-title">🏦 계좌별 수익률</div>';
+
+  (d.accounts || []).forEach(function(a) {
+    var rv = typeof a.rate === 'number' ? a.rate : parseFloat(a.rate || 0);
+    h += '<div class="account-card">';
+    h += '<div class="acc-icon">' + accIcon(a.name) + '</div>';
+    h += '<div class="acc-info">';
+    h += '<div class="acc-name">' + a.name + '</div>';
+    h += '<div class="acc-value">' + fmt(a.value) + '원</div>';
+    h += '</div>';
+    h += '<div class="acc-rate ' + dropClass(rv) + '">' + fmtRate(rv) + '</div>';
+    h += '</div>';
+  });
+
+  h += '</div>';
+
+  // VOO 세부
+  if (d.vooCurPrice || d.vooPeakPrice) {
+    h += '<div class="section"><div class="section-title">🔵 B트리거 (VOO) 세부</div>';
+    h += '<div class="slv-price-row" style="margin-bottom:8px">';
+    h += '<div class="slv-p-item"><div class="slv-p-label">VOO 현재가</div><div class="slv-p-val">' + fmtUSD(d.vooCurPrice) + '</div></div>';
+    h += '<div class="slv-p-item"><div class="slv-p-label">B0 전고점</div><div class="slv-p-val" style="color:var(--muted)">' + fmtUSD(d.vooPeakPrice) + '</div></div>';
+    h += '</div>';
+    var vdrop = parseFloat(d.vooDrop || d.vooDrop2) || 0;
+    h += '<div class="trigger-card" style="margin-bottom:6px">';
+    h += '<div class="t-stripe ' + stripeColor(d.bTriggerSig || d.bTrigger) + '"></div>';
+    h += '<div class="t-head">';
+    h += '<div class="t-label">🔵 B트리거 현황</div>';
+    h += '<div class="t-value">' + (d.bTriggerSig || d.bTrigger || '—') + '</div>';
+    h += '<div class="t-sub">VOO 하락률: ' + fmtRate(vdrop) + '</div>';
+    h += '</div></div>';
+    h += '</div>';
+  }
+
+  return h + '<div style="height:12px"></div>';
+}
+
+// ── 설정 ──
+function showConfig() {
+  document.getElementById('apiUrlInput').value = API_URL;
+  document.getElementById('configModal').classList.add('show');
+}
+function hideConfig() {
+  document.getElementById('configModal').classList.remove('show');
+}
+function overlayClick(e) {
+  if (e.target === document.getElementById('configModal')) hideConfig();
+}
+function saveConfig() {
+  var url = document.getElementById('apiUrlInput').value.trim();
+  if (!url) { alert('URL을 입력해주세요'); return; }
+  API_URL = url;
+  localStorage.setItem('jtp_api_url', url);
+  hideConfig();
+  loadData();
+}
+
+// ── 초기화 ──
+if (API_URL) {
+  loadData();
+} else {
+  document.getElementById('mainContent').innerHTML =
+    '<div class="loading">' +
+    '<div style="font-size:40px">⚙️</div>' +
+    '<div style="color:var(--muted);text-align:center;line-height:1.8">GAS 웹앱 URL을 설정해주세요<br>' +
+    '<span style="font-size:12px">오른쪽 상단 ⚙️ 버튼</span></div>' +
+    '<button class="btn btn-save" style="width:160px;margin-top:8px" onclick="showConfig()">URL 설정하기</button>' +
+    '</div>';
+}
+</script>
+</body>
+</html>
