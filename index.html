@@ -657,10 +657,10 @@ function renderMarket(d) {
 
   var markets = [
     { name:'🥇 국제금', drop: (d.goldDrop && d.goldDrop < 0) ? d.goldDrop : (d.goldDropPct || d.goldDrop),   sig: d.gTriggerSig ? d.gTriggerSig.substring(0,30) : '' },
-    { name:'🥈 국제은(SLV)', drop: (d.silverDrop && d.silverDrop < -5) ? d.silverDrop : d.slvDropPct, sig: 'ATH대비 ' + fmtRate(d.slvDropPct) },
+    { name:'🥈 국제은(SLV)', drop: d.slvDropPct, sig: 'ATH대비 ' + fmtRate(d.slvDropPct) },
     { name:'📈 VOO',    drop: d.vooDrop || d.vooDrop2,   sig: d.bTriggerSig ? d.bTriggerSig.substring(0,30) : '' },
     { name:'💻 QQQ',    drop: d.qqqDrop,    sig: d.qqqDrop != null ? ('전고점대비 ' + fmtRate(d.qqqDrop)) : '가격데이터 미조회' },
-    { name:'💾 SNDK',   drop: (function(){ var acc = (d.accounts||[]).find(function(a){return a.name&&a.name.includes('SNDK');}); return acc ? acc.rate : (d.sndkDrop || null); })(),   sig: d.sndkSig ? d.sndkSig.substring(0,30) : '' },
+    { name:'💾 SNDK',   drop: (function(){ var m = (d.sndkSig||'').match(/\|\s*([\-\d.]+)%/); if(m) return parseFloat(m[1]); var acc = (d.accounts||[]).find(function(a){return a.name&&a.name.includes('SNDK');}); return acc ? acc.rate : null; })(),   sig: d.sndkSig ? d.sndkSig.substring(0,30) : '' },
     { name:'💵 원달러', drop: null,  val: d.usdkrw || '', sig: d.usdkrwSig ? d.usdkrwSig.substring(0,28) : '' }
   ];
 
