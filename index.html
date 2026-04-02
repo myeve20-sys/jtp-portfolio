@@ -386,7 +386,7 @@ body {
 
 <script>
 // ── 전역 상태 ──
-var API_URL = localStorage.getItem('jtp_api_url') || 'https://script.google.com/macros/s/AKfycbzEU8JUPw2yl7dVKlgAsEfnJlDe8aibTirP3E9OYsptkYr6027D5smtPI2LDCtZMA4p/exec';
+var API_URL = localStorage.getItem('jtp_api_url') || 'https://script.google.com/macros/s/AKfycbzNuDrWSirEUblN_J5YMUd_oHoUqgnxUelE8ygPfZGPM9Wfiy_ZUSo2PQ-IAzzMGEN_/exec';
 var AUTO_MS  = 5 * 60 * 1000;
 var timer, gData = null;
 var activeTab = 'home';
@@ -656,12 +656,12 @@ function renderMarket(d) {
   h += '<div class="market-grid">';
 
   var markets = [
-    { name:'🥇 국제금', drop: (d.goldDrop && d.goldDrop < 0) ? d.goldDrop : (d.goldDropPct || d.goldDrop),   sig: d.gTriggerSig ? d.gTriggerSig.substring(0,30) : '' },
-    { name:'🥈 국제은(SLV)', drop: d.slvDropPct, sig: 'ATH대비 ' + fmtRate(d.slvDropPct) },
-    { name:'📈 VOO',    drop: d.vooDrop || d.vooDrop2,   sig: d.bTriggerSig ? d.bTriggerSig.substring(0,30) : '' },
-    { name:'💻 QQQ',    drop: d.qqqDrop,    sig: d.qqqDrop != null ? ('전고점대비 ' + fmtRate(d.qqqDrop)) : '가격데이터 미조회' },
-    { name:'💾 SNDK',   drop: (function(){ var m = (d.sndkSig||'').match(/\|\s*([\-\d.]+)%/); if(m) return parseFloat(m[1]); var acc = (d.accounts||[]).find(function(a){return a.name&&a.name.includes('SNDK');}); return acc ? acc.rate : null; })(),   sig: d.sndkSig ? d.sndkSig.substring(0,30) : '' },
-    { name:'💵 원달러', drop: null,  val: d.usdkrw || '', sig: d.usdkrwSig ? d.usdkrwSig.substring(0,28) : '' }
+    { name:'🥇 국제금', drop: d.goldDrop,   sig: d.goldSignal  || '' },
+    { name:'🥈 국제은(SLV)', drop: d.silverDrop, sig: d.silverSignal ? d.silverSignal.substring(0,30) : ('ATH대비 ' + fmtRate(d.slvDropPct)) },
+    { name:'📈 VOO',    drop: d.vooDrop2,   sig: d.vooSignal ? d.vooSignal.substring(0,30) : '' },
+    { name:'💻 QQQ',    drop: d.qqqDrop,    sig: d.qqqDrop != null ? ('전고점대비 ' + fmtRate(d.qqqDrop)) : '데이터 없음' },
+    { name:'💾 SNDK',   drop: d.sndkDrop,   sig: '전고점대비 ' + fmtRate(d.sndkDrop || d.sndkDropPct) },
+    { name:'💵 원달러', drop: null,  val: d.usdkrw, sig: d.usdkrwSig ? d.usdkrwSig.substring(0,28) : '' }
   ];
 
   markets.forEach(function(m) {
@@ -671,14 +671,7 @@ function renderMarket(d) {
       var dv = parseFloat(m.drop);
       h += '<div class="m-drop ' + dropClass(dv) + '">' + fmtRate(dv) + '</div>';
     } else {
-      // 원달러: val이 없으면 usdkrwSig에서 환율 숫자 추출 시도
-      var dispVal = m.val;
-      if (!dispVal && m.sig) {
-        var numMatch = m.sig.match(/(\d{3,5})[원원+]/);
-        if (!numMatch) numMatch = m.sig.match(/(\d{4,5})/);
-        if (numMatch) dispVal = numMatch[1] + '원+';
-      }
-      h += '<div class="m-drop drop-neu">' + (dispVal || '조회중') + '</div>';
+      h += '<div class="m-drop drop-neu">' + fmt(m.val) + '<span style="font-size:11px;color:var(--muted)">원</span></div>';
     }
     if (m.sig) h += '<div class="m-sig">' + m.sig + '</div>';
     h += '</div>';
